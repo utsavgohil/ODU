@@ -2,6 +2,9 @@ from flask import Flask,request
 import math
 from flask import jsonify
 import json
+import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 
@@ -9,17 +12,29 @@ app = Flask(__name__)
 @app.route('/home',methods =['POST'])
 def post():
 	json_data=request.data
-	print json_data
+	
 	jsonobj=json.loads(json_data)
+	print jsonobj
+
 	n=len(jsonobj['coordinates'])
 	print n
 	for point in jsonobj['coordinates']:
 		print point['x']
 		print point['y']
 		print point['z']
+	fig = plt.figure()
+	ax = fig.add_subplot(111, projection='3d')
+	for i in jsonobj['coordinates']:
+	 	xs = i['x']
+	 	ys = i['y']
+	 	zs =i['z']
+	 	ax.scatter(xs, ys, zs, c='r', marker='o')
+	ax.set_xlabel('X Label')
+	ax.set_ylabel('Y Label')
+	ax.set_zlabel('Z Label')
+	plt.show()
 	
-	print jsonobj['coordinates[x[0]]']
-	print jsonobj['coordinates[x[n-1]]']
+	
 	return "success"
 
 
@@ -42,7 +57,13 @@ def hello():
 	theta=math.acos(angle)
 	degree=theta*180/math.pi
 	num=(math.sqrt(total))
+	
 	return jsonify(distance=num,angle=degree)
+
+
+
 	
 if __name__ == "__main__":
 	app.run(host= '128.82.8.12', port=8080, debug=False)
+
+	
